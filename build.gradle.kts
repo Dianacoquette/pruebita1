@@ -26,6 +26,11 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+
+	implementation("com.microsoft.sqlserver:mssql-jdbc:12.6.1.jre11")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 kotlin {
