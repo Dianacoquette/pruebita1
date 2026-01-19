@@ -31,6 +31,8 @@ dependencies {
 
 	implementation("com.microsoft.sqlserver:mssql-jdbc:12.6.1.jre11")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
 }
 
 kotlin {
