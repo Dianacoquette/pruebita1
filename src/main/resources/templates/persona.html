@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persona Principal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(255, 182, 217, 0.1);
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #b08599;
+        }
+
+        nav a {
+            color: #d67ba8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #e89fc9;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #d4a8bf;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 50px 40px;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #b08599;
+            font-size: 16px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 171, 225, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e89fc9 0%, #dc8db7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: #ffb6d9;
+            top: -100px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: #ffd4e8;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .content-card {
+                padding: 40px 30px;
+            }
+
+            nav {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <nav>
+        <a href="/">Inicio</a>
+        <span class="breadcrumb-separator">›</span>
+        Persona Principal
+    </nav>
+
+    <div class="container">
+        <div class="content-card">
+            <h1>Pantalla Persona Principal</h1>
+            <p>Desde aquí puedes agregar una nueva persona.</p>
+            <a href="/persona/agregar" class="btn-primary">Agregar Persona</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -10,20 +10,24 @@ import org.springframework.context.annotation.Bean
 @SpringBootApplication
 class Pruebita1Application {
 
+
+	/*
 	@Bean
 	fun init(userRepository: UserRepository) = CommandLineRunner {
 
 		val user = User(
-			id = 2,
-			username = "dii",
-			email = "dii@email.com",
-			passwd = "1234"
+			id = 10,
+			username = "sdsd",
+			email = "asdd@email.com",
+			passwd = "4423"
 		)
 
 		userRepository.save(user)
 
 		println("Usuario insertado en la DB")
 	}
+
+	 */
 }
 
 fun main(args: Array<String>) {

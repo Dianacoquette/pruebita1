@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Persona</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(255, 182, 217, 0.1);
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #b08599;
+        }
+
+        nav a {
+            color: #d67ba8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #e89fc9;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #d4a8bf;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 50px 40px;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #8b5a73;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fefbfd;
+            color: #5a4351;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #f4abe1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(244, 171, 225, 0.1);
+        }
+
+        input::placeholder {
+            color: #d4a8bf;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #b08599;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(244, 171, 225, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #e89fc9 0%, #dc8db7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            background: #ffe8f0;
+            color: #d65a8a;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin: 15px 0;
+            border-left: 4px solid #f4abe1;
+        }
+
+        #pantallaExito {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        #pantallaExito h2 {
+            color: #d67ba8;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        #pantallaExito p {
+            color: #b08599;
+            font-size: 16px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .captcha-box {
+            background: #fff8fc;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .captcha-box label {
+            margin-bottom: 10px;
+            color: #d67ba8;
+            font-weight: 600;
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: #ffb6d9;
+            top: -100px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #ffd4e8;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            nav {
+                padding: 12px 20px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <nav>
+        <a href="/">Inicio</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="/persona">Persona Principal</a>
+        <span class="breadcrumb-separator">›</span>
+        Agregar Persona
+    </nav>
+
+    <div class="container">
+        <div class="form-card">
+            
+            <form id="formPersona" onsubmit="return validarFormulario()">
+                <h1>Agregar Persona</h1>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre *</label>
+                    <input 
+                        type="text" 
+                        id="nombre" 
+                        placeholder="Ingresa tu nombre"
+                        minlength="3"
+                        maxlength="100"
+                        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,100}$"
+                        title="Solo letras y espacios, entre 3 y 100 caracteres"
+                        required>
+                    <div class="input-hint">Entre 3 y 100 caracteres (solo letras)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="tu@email.com"
+                        maxlength="100"
+                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                        title="Introduce un correo electrónico válido"
+                        required>
+                    <div class="input-hint">Máximo 100 caracteres</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña *</label>
+                    <input 
+                        type="password"
+                        id="password"
+                        placeholder="••••••••"
+                        minlength="6"
+                        maxlength="50"
+                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{6,50}$"
+                        title="Mínimo 6 caracteres, al menos una letra y un número. Máximo 50 caracteres."
+                        required>
+                    <div class="input-hint">Entre 6 y 50 caracteres, al menos una letra y un número</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Contraseña *</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        placeholder="••••••••"
+                        minlength="6"
+                        maxlength="50"
+                        required>
+                    <div class="input-hint">Debe coincidir con la contraseña</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="captcha-box">
+                        <label id="captchaTexto"></label>
+                        <input 
+                            type="text" 
+                            id="captchaRespuesta" 
+                            placeholder="Escribe tu respuesta" 
+                            required>
+                    </div>
+                </div>
+
+                <span id="error" class="error" style="display: none;"></span>
+
+                <button type="submit">Guardar Persona</button>
+
+            </form>
+
+            <div id="pantallaExito">
+                <div class="success-icon">✓</div>
+                <h2>¡Persona agregada correctamente!</h2>
+                <p>Serás redirigido al inicio en unos segundos...</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let num1, num2, resultadoCorrecto;
+
+        function generarCaptcha() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            resultadoCorrecto = num1 + num2;
+
+            document.getElementById("captchaTexto").innerText =
+                `Captcha: ¿Cuánto es ${num1} + ${num2}? *`;
+        }
+
+        function validarFormulario() {
+            const nombre = document.getElementById("nombre").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const captcha = document.getElementById("captchaRespuesta").value.trim();
+            const errorDiv = document.getElementById("error");
+
+            errorDiv.style.display = "none";
+            errorDiv.textContent = "";
+
+            // Validar nombre
+            const nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,100}$/;
+            if (!nombrePattern.test(nombre)) {
+                errorDiv.textContent = "El nombre solo debe contener letras y espacios (entre 3 y 100 caracteres)";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Validar email
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email) || email.length > 100) {
+                errorDiv.textContent = "Por favor introduce un correo electrónico válido (máximo 100 caracteres)";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Validar contraseña
+            if (password.length < 6 || password.length > 50) {
+                errorDiv.textContent = "La contraseña debe tener entre 6 y 50 caracteres";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{6,50}$/;
+            if (!passwordPattern.test(password)) {
+                errorDiv.textContent = "La contraseña debe contener al menos una letra y un número";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Validar confirmación de contraseña
+            if (password !== confirmPassword) {
+                errorDiv.textContent = "Las contraseñas no coinciden";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            // Validar captcha
+            if (captcha === "" || parseInt(captcha) !== resultadoCorrecto) {
+                errorDiv.textContent = "Captcha incorrecto, inténtalo de nuevo";
+                errorDiv.style.display = "block";
+                generarCaptcha();
+                return false;
+            }
+
+            // TODO CORRECTO: MOSTRAMOS PANTALLA DE ÉXITO
+            document.getElementById("formPersona").style.display = "none";
+            document.getElementById("pantallaExito").style.display = "block";
+
+            // REDIRECCIÓN AUTOMÁTICA AL INICIO
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 3000);
+
+            return false;
+        }
+
+        // Validación en tiempo real
+        document.getElementById("nombre").addEventListener("input", function(e) {
+            let value = e.target.value;
+            // Eliminar números y caracteres especiales
+            value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+            if (value.length > 100) {
+                value = value.substring(0, 100);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById("email").addEventListener("input", function(e) {
+            const value = e.target.value;
+            if (value.length > 100) {
+                e.target.value = value.substring(0, 100);
+            }
+        });
+
+        document.getElementById("password").addEventListener("input", function(e) {
+            const value = e.target.value;
+            if (value.length > 50) {
+                e.target.value = value.substring(0, 50);
+            }
+        });
+
+        document.getElementById("confirmPassword").addEventListener("input", function(e) {
+            const value = e.target.value;
+            if (value.length > 50) {
+                e.target.value = value.substring(0, 50);
+            }
+        });
+
+        document.getElementById("captchaRespuesta").addEventListener("input", function(e) {
+            let value = e.target.value;
+            // Solo permitir números
+            value = value.replace(/[^0-9]/g, '');
+            if (value.length > 3) {
+                value = value.substring(0, 3);
+            }
+            e.target.value = value;
+        });
+
+        window.onload = generarCaptcha;
+    </script>
+
+</body>
+</html>

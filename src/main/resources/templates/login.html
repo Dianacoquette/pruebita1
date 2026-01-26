@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 50px 40px;
+            max-width: 440px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #b08599;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #8b5a73;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fefbfd;
+            color: #5a4351;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #b08599;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .recaptcha-container {
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #ffe8f0;
+            color: #d65a8a;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Bienvenida</h1>
+    <p class="subtitle">Inicia sesión en tu cuenta</p>
+
+    <form onsubmit="return validarLogin()">
+
+        <div class="form-group">
+            <label>Correo Electrónico *</label>
+            <input type="email" id="email" required maxlength="100">
+            <div class="password-hint">Máximo 100 caracteres</div>
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña *</label>
+            <input type="password" id="password" required minlength="6" maxlength="50">
+            <div class="password-hint">Entre 6 y 50 caracteres</div>
+        </div>
+
+        <div class="recaptcha-container">
+            <div class="g-recaptcha" data-sitekey="6LfWPVcsAAAAAMi14ae3zxMZmfNG6ACq2dfhlP6B"></div>
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <button type="submit">Iniciar Sesión</button>
+
+        <p style="text-align:center; margin-top:20px; font-size:14px;">
+            ¿No tienes cuenta?
+            <a href="/signup" style="color:#d67ba8; font-weight:600;">Regístrate aquí</a>
+        </p>
+
+    </form>
+</div>
+
+<script>
+    function validarLogin() {
+        const captcha = grecaptcha.getResponse();
+        const errorDiv = document.getElementById("error");
+
+        errorDiv.classList.remove("show");
+        errorDiv.textContent = "";
+
+        if (captcha.length === 0) {
+            errorDiv.textContent = "Por favor verifica el reCAPTCHA para continuar";
+            errorDiv.classList.add("show");
+            return false;
+        }
+
+        //REDIRECCIÓN REAL
+        window.location.href = "/";
+        return false;
+    }
+</script>
+
+</body>
+</html>
