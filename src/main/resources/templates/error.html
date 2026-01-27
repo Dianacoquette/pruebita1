@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(244, 171, 225, 0.3);
+            position: relative;
+        }
+
+        .error-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .error-details {
+            background: #fff8fc;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .error-item {
+            margin-bottom: 12px;
+            color: #8b5a73;
+            font-size: 14px;
+        }
+
+        .error-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-item strong {
+            color: #d67ba8;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .error-item span {
+            color: #b08599;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 171, 225, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e89fc9 0%, #dc8db7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #b08599;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 250px;
+            height: 250px;
+            background: #ffb6d9;
+            top: -80px;
+            right: -80px;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #ffd4e8;
+            bottom: -60px;
+            left: -60px;
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .error-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <div class="error-container">
+        <div class="error-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+        </div>
+        
+        <h1>Oops... Ocurrió un error</h1>
+        
+        <p class="error-message">
+            Lo sentimos, algo no salió como esperábamos. Por favor, revisa los detalles e intenta nuevamente.
+        </p>
+
+        <div class="error-details">
+            <div class="error-item" th:if="${status}">
+                <strong>Código:</strong>
+                <span th:text="${status}">500</span>
+            </div>
+
+            <div class="error-item" th:if="${error}">
+                <strong>Error:</strong>
+                <span th:text="${error}">Error interno del servidor</span>
+            </div>
+
+            <div class="error-item" th:if="${message}">
+                <strong>Mensaje:</strong>
+                <span th:text="${message}">Ha ocurrido un error inesperado</span>
+            </div>
+        </div>
+
+        <a href="/inicio" class="btn-primary">Volver al Inicio</a>
+    </div>
+
+</body>
+</html>
