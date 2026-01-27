@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Agregados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .header-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(244, 171, 225, 0.3);
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #b08599;
+            font-size: 15px;
+        }
+
+        .users-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .user-list {
+            list-style: none;
+        }
+
+        .user-item {
+            background: #fff8fc;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .user-item:hover {
+            border-color: #f4abe1;
+            box-shadow: 0 4px 12px rgba(244, 171, 225, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-field {
+            display: inline-block;
+            margin-right: 20px;
+            font-size: 14px;
+            color: #8b5a73;
+        }
+
+        .user-field strong {
+            color: #d67ba8;
+            font-weight: 600;
+        }
+
+        .user-field span {
+            color: #b08599;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 171, 225, 0.3);
+        }
+
+        .btn-back:hover {
+            background: linear-gradient(135deg, #e89fc9 0%, #dc8db7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
+        }
+
+        .btn-back:active {
+            transform: translateY(0);
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #b08599;
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: #ffb6d9;
+            top: -100px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: #ffd4e8;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .header-card {
+                padding: 30px 25px;
+            }
+
+            .users-card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .user-field {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+
+            .user-field:last-child {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <div class="container">
+        <div class="header-card">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            </div>
+            <h1>Usuarios Agregados Exitosamente</h1>
+            <p class="subtitle">Los siguientes usuarios han sido creados en el sistema</p>
+        </div>
+
+        <div class="users-card">
+            <ul class="user-list">
+                <li class="user-item" th:each="u : ${usuarios}">
+                    <div class="user-field">
+                        <strong>ID:</strong>
+                        <span th:text="${u.id}">1</span>
+                    </div>
+                    <div class="user-field">
+                        <strong>Usuario:</strong>
+                        <span th:text="${u.username}">johndoe</span>
+                    </div>
+                    <div class="user-field">
+                        <strong>Email:</strong>
+                        <span th:text="${u.email}">john@example.com</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="empty-state" th:if="${usuarios == null || usuarios.isEmpty()}">
+                <p>No hay usuarios para mostrar.</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/hardcode" class="btn-back">Volver</a>
+        </div>
+    </div>
+
+</body>
+</html>

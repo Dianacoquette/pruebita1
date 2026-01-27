@@ -29,28 +29,32 @@ class AuthController(
         session: HttpSession
     ): String {
 
-        // 1️⃣ Validar campos vacíos
-        if (email.isBlank() || password.isBlank()) {
-            model.addAttribute("error", "Todos los campos son obligatorios")
+        // 1️⃣ LIMPIAR ESPACIOS
+        val emailLimpio = email.trim()
+        val passwordLimpio = password.trim()
+
+        // 2️⃣ Validar campos vacíos o solo espacios
+        if (emailLimpio.isEmpty() || passwordLimpio.isEmpty()) {
+            model.addAttribute("error", "No puedes ingresar solo espacios")
             return "login"
         }
 
-        // 2️⃣ Validar correo
-        if (!email.contains("@")) {
+        // 3️⃣ Validar correo
+        if (!emailLimpio.contains("@")) {
             model.addAttribute("error", "Correo inválido")
             return "login"
         }
 
-        // 3️⃣ Validar reCAPTCHA
+        // 4️⃣ Validar reCAPTCHA
         if (!recaptchaService.validar(recaptcha)) {
-            model.addAttribute("error", "Confirma que no eres un robot 🤖")
+            model.addAttribute("error", "Confirma que no eres un robot")
             return "login"
         }
 
-        // 4️⃣ GUARDAR EMAIL EN SESIÓN
-        session.setAttribute("emailUsuario", email)
+        // 5️⃣ GUARDAR EMAIL EN SESIÓN
+        session.setAttribute("emailUsuario", emailLimpio)
 
-        // 5️⃣ IR AL INICIO
+        // 6️⃣ IR AL INICIO
         return "redirect:/inicio"
     }
 
@@ -71,34 +75,45 @@ class AuthController(
         session: HttpSession
     ): String {
 
-        // 1️⃣ Validar nombre
-        if (nombre.length < 3) {
+        // 1️⃣ LIMPIAR ESPACIOS
+        val nombreLimpio = nombre.trim()
+        val emailLimpio = email.trim()
+        val passwordLimpio = password.trim()
+
+        // 2️⃣ Validar campos con solo espacios
+        if (nombreLimpio.isEmpty() || emailLimpio.isEmpty() || passwordLimpio.isEmpty()) {
+            model.addAttribute("error", "No se permiten campos con solo espacios")
+            return "signup"
+        }
+
+        // 3️⃣ Validar nombre
+        if (nombreLimpio.length < 3) {
             model.addAttribute("error", "El nombre debe tener al menos 3 caracteres")
             return "signup"
         }
 
-        // 2️⃣ Validar correo
-        if (!email.contains("@")) {
+        // 4️⃣ Validar correo
+        if (!emailLimpio.contains("@")) {
             model.addAttribute("error", "Correo inválido")
             return "signup"
         }
 
-        // 3️⃣ Validar contraseña
-        if (password.length < 6) {
+        // 5️⃣ Validar contraseña
+        if (passwordLimpio.length < 6) {
             model.addAttribute("error", "La contraseña debe tener mínimo 6 caracteres")
             return "signup"
         }
 
-        // 4️⃣ Validar reCAPTCHA
+        // 6️⃣ Validar reCAPTCHA
         if (!recaptchaService.validar(recaptcha)) {
-            model.addAttribute("error", "Confirma que no eres un robot 🤖")
+            model.addAttribute("error", "Confirma que no eres un robot")
             return "signup"
         }
 
-        // 5️⃣ GUARDAR EMAIL EN SESIÓN
-        session.setAttribute("emailUsuario", email)
+        // 7️⃣ GUARDAR EMAIL EN SESIÓN
+        session.setAttribute("emailUsuario", emailLimpio)
 
-        // 6️⃣ IR AL INICIO
+        // 8️⃣ IR AL INICIO
         return "redirect:/inicio"
     }
 }

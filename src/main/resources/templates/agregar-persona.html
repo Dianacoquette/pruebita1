@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Persona</title>
     <style>
-        * {
+         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -237,78 +237,41 @@
 
     <div class="container">
         <div class="form-card">
-            
-            <form id="formPersona" onsubmit="return validarFormulario()">
+
+            <!-- 🔴 novalidate agregado -->
+            <form id="formPersona" onsubmit="return validarFormulario()" novalidate>
                 <h1>Agregar Persona</h1>
 
                 <div class="form-group">
                     <label for="nombre">Nombre *</label>
-                    <input 
-                        type="text" 
-                        id="nombre" 
-                        placeholder="Ingresa tu nombre"
-                        minlength="3"
-                        maxlength="100"
-                        pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,100}$"
-                        title="Solo letras y espacios, entre 3 y 100 caracteres"
-                        required>
-                    <div class="input-hint">Entre 3 y 100 caracteres (solo letras)</div>
+                    <input type="text" id="nombre" placeholder="Ingresa tu nombre" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email *</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        placeholder="tu@email.com"
-                        maxlength="100"
-                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                        title="Introduce un correo electrónico válido"
-                        required>
-                    <div class="input-hint">Máximo 100 caracteres</div>
+                    <input type="email" id="email" placeholder="tu@email.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Contraseña *</label>
-                    <input 
-                        type="password"
-                        id="password"
-                        placeholder="••••••••"
-                        minlength="6"
-                        maxlength="50"
-                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{6,50}$"
-                        title="Mínimo 6 caracteres, al menos una letra y un número. Máximo 50 caracteres."
-                        required>
-                    <div class="input-hint">Entre 6 y 50 caracteres, al menos una letra y un número</div>
+                    <input type="password" id="password" placeholder="••••••••" required>
                 </div>
 
                 <div class="form-group">
                     <label for="confirmPassword">Confirmar Contraseña *</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        placeholder="••••••••"
-                        minlength="6"
-                        maxlength="50"
-                        required>
-                    <div class="input-hint">Debe coincidir con la contraseña</div>
+                    <input type="password" id="confirmPassword" placeholder="••••••••" required>
                 </div>
 
                 <div class="form-group">
                     <div class="captcha-box">
                         <label id="captchaTexto"></label>
-                        <input 
-                            type="text" 
-                            id="captchaRespuesta" 
-                            placeholder="Escribe tu respuesta" 
-                            required>
+                        <input type="text" id="captchaRespuesta" placeholder="Escribe tu respuesta" required>
                     </div>
                 </div>
 
-                <span id="error" class="error" style="display: none;"></span>
+                <span id="error" class="error" style="display:none;"></span>
 
                 <button type="submit">Guardar Persona</button>
-
             </form>
 
             <div id="pantallaExito">
@@ -333,47 +296,57 @@
         }
 
         function validarFormulario() {
-            const nombre = document.getElementById("nombre").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
+            // 🧼 TRIM EN TODOS LOS CAMPOS
+            const nombre = document.getElementById("nombre").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
             const captcha = document.getElementById("captchaRespuesta").value.trim();
             const errorDiv = document.getElementById("error");
 
             errorDiv.style.display = "none";
             errorDiv.textContent = "";
 
+            // 🚫 NUEVA VALIDACIÓN: SOLO ESPACIOS
+            if (
+                nombre === "" ||
+                email === "" ||
+                password === "" ||
+                confirmPassword === "" ||
+                captcha === ""
+            ) {
+                errorDiv.textContent = "No puedes enviar campos con solo espacios ";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
             // Validar nombre
             const nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,100}$/;
             if (!nombrePattern.test(nombre)) {
-                errorDiv.textContent = "El nombre solo debe contener letras y espacios (entre 3 y 100 caracteres)";
+                errorDiv.textContent = "El nombre solo debe contener letras y espacios";
                 errorDiv.style.display = "block";
                 return false;
             }
 
             // Validar email
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(email) || email.length > 100) {
-                errorDiv.textContent = "Por favor introduce un correo electrónico válido (máximo 100 caracteres)";
+
+            if (!emailPattern.test(email)) {
+                errorDiv.textContent = "El correo debe incluir dominio y extensión (ej. correo@gmail.com)";
+
                 errorDiv.style.display = "block";
                 return false;
             }
 
             // Validar contraseña
-            if (password.length < 6 || password.length > 50) {
-                errorDiv.textContent = "La contraseña debe tener entre 6 y 50 caracteres";
-                errorDiv.style.display = "block";
-                return false;
-            }
-
             const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{6,50}$/;
             if (!passwordPattern.test(password)) {
-                errorDiv.textContent = "La contraseña debe contener al menos una letra y un número";
+                errorDiv.textContent = "La contraseña debe tener al menos una letra y un número";
                 errorDiv.style.display = "block";
                 return false;
             }
 
-            // Validar confirmación de contraseña
+            // Confirmar contraseña
             if (password !== confirmPassword) {
                 errorDiv.textContent = "Las contraseñas no coinciden";
                 errorDiv.style.display = "block";
@@ -381,66 +354,23 @@
             }
 
             // Validar captcha
-            if (captcha === "" || parseInt(captcha) !== resultadoCorrecto) {
-                errorDiv.textContent = "Captcha incorrecto, inténtalo de nuevo";
+            if (parseInt(captcha) !== resultadoCorrecto) {
+                errorDiv.textContent = "Captcha incorrecto, intenta otra vez";
                 errorDiv.style.display = "block";
                 generarCaptcha();
                 return false;
             }
 
-            // TODO CORRECTO: MOSTRAMOS PANTALLA DE ÉXITO
+            // 🎉 ÉXITO
             document.getElementById("formPersona").style.display = "none";
             document.getElementById("pantallaExito").style.display = "block";
 
-            // REDIRECCIÓN AUTOMÁTICA AL INICIO
             setTimeout(() => {
                 window.location.href = "/inicio";
             }, 3000);
 
             return false;
         }
-
-        // Validación en tiempo real
-        document.getElementById("nombre").addEventListener("input", function(e) {
-            let value = e.target.value;
-            // Eliminar números y caracteres especiales
-            value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-            if (value.length > 100) {
-                value = value.substring(0, 100);
-            }
-            e.target.value = value;
-        });
-
-        document.getElementById("email").addEventListener("input", function(e) {
-            const value = e.target.value;
-            if (value.length > 100) {
-                e.target.value = value.substring(0, 100);
-            }
-        });
-
-        document.getElementById("password").addEventListener("input", function(e) {
-            const value = e.target.value;
-            if (value.length > 50) {
-                e.target.value = value.substring(0, 50);
-            }
-        });
-
-        document.getElementById("confirmPassword").addEventListener("input", function(e) {
-            const value = e.target.value;
-            if (value.length > 50) {
-                e.target.value = value.substring(0, 50);
-            }
-        });
-
-        document.getElementById("captchaRespuesta").addEventListener("input", function(e) {
-            let value = e.target.value;
-            // Solo permitir números
-            value = value.replace(/[^0-9]/g, '');
-            if (value.length > 3) {
-                value = value.substring(0, 3);
-            }
-            e.target.value = value;
-        });
 
         window.onload = generarCaptcha;
     </script>

@@ -117,18 +117,17 @@
     <h1>Bienvenida</h1>
     <p class="subtitle">Inicia sesión en tu cuenta</p>
 
-    <form action="/login" method="post" onsubmit="return validarLogin()">
-
+    <form action="/login" method="post" onsubmit="return validarLogin()" novalidate>
 
         <div class="form-group">
             <label>Correo Electrónico *</label>
-            <input type="email" id="email" name="email" required maxlength="100">
-            <div class="password-hint">Máximo 100 caracteres</div>
+            <input type="email" id="email" name="email" maxlength="100">
+            <div class="password-hint">Ejemplo: correo@gmail.com</div>
         </div>
 
         <div class="form-group">
             <label>Contraseña *</label>
-            <input type="password" id="password" name="password" required minlength="6" maxlength="50">
+            <input type="password" id="password" name="password" minlength="6" maxlength="50">
             <div class="password-hint">Entre 6 y 50 caracteres</div>
         </div>
 
@@ -149,23 +148,47 @@
 </div>
 
 <script>
-    function validarLogin() {
+function validarLogin() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
     const captcha = grecaptcha.getResponse();
     const errorDiv = document.getElementById("error");
 
     errorDiv.classList.remove("show");
     errorDiv.textContent = "";
 
-    if (captcha.length === 0) {
-        errorDiv.textContent = "Por favor verifica el reCAPTCHA para continuar";
+    // 🚫 CAMPOS VACÍOS O SOLO ESPACIOS
+    if (email === "" || password === "") {
+        errorDiv.textContent = "No puedes dejar campos vacíos o con solo espacios";
         errorDiv.classList.add("show");
         return false;
     }
 
-    
+    // 📧 VALIDAR EMAIL CON DOMINIO
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+        errorDiv.textContent = "El correo debe tener dominio y extensión (ej. correo@gmail.com)";
+        errorDiv.classList.add("show");
+        return false;
+    }
+
+    // 🔐 VALIDAR PASSWORD
+    if (password.length < 6) {
+        errorDiv.textContent = "La contraseña debe tener al menos 6 caracteres";
+        errorDiv.classList.add("show");
+        return false;
+    }
+
+    // 🤖 VALIDAR CAPTCHA
+    if (captcha.length === 0) {
+        errorDiv.textContent = "Por favor verifica el reCAPTCHA";
+        errorDiv.classList.add("show");
+        return false;
+    }
+
+    // ✅ TODO CORRECTO
     return true;
 }
-
 </script>
 
 </body>

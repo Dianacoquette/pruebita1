@@ -313,7 +313,7 @@
             if (!emailPattern.test(email) || email.length > 100) {
                 e.preventDefault();
                 if (errorDiv) {
-                    errorDiv.textContent = "Por favor introduce un correo electrónico válido (máximo 100 caracteres)";
+                    errorDiv.textContent = "Por favor introduce un correo electrónico válido, debe incluir dominio y extensión (máximo 100 caracteres)";
                     errorDiv.style.display = "block";
                 }
                 return false;
