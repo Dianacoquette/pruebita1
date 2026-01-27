@@ -117,17 +117,18 @@
     <h1>Bienvenida</h1>
     <p class="subtitle">Inicia sesión en tu cuenta</p>
 
-    <form onsubmit="return validarLogin()">
+    <form action="/login" method="post" onsubmit="return validarLogin()">
+
 
         <div class="form-group">
             <label>Correo Electrónico *</label>
-            <input type="email" id="email" required maxlength="100">
+            <input type="email" id="email" name="email" required maxlength="100">
             <div class="password-hint">Máximo 100 caracteres</div>
         </div>
 
         <div class="form-group">
             <label>Contraseña *</label>
-            <input type="password" id="password" required minlength="6" maxlength="50">
+            <input type="password" id="password" name="password" required minlength="6" maxlength="50">
             <div class="password-hint">Entre 6 y 50 caracteres</div>
         </div>
 
@@ -149,22 +150,22 @@
 
 <script>
     function validarLogin() {
-        const captcha = grecaptcha.getResponse();
-        const errorDiv = document.getElementById("error");
+    const captcha = grecaptcha.getResponse();
+    const errorDiv = document.getElementById("error");
 
-        errorDiv.classList.remove("show");
-        errorDiv.textContent = "";
+    errorDiv.classList.remove("show");
+    errorDiv.textContent = "";
 
-        if (captcha.length === 0) {
-            errorDiv.textContent = "Por favor verifica el reCAPTCHA para continuar";
-            errorDiv.classList.add("show");
-            return false;
-        }
-
-        //REDIRECCIÓN REAL
-        window.location.href = "/";
+    if (captcha.length === 0) {
+        errorDiv.textContent = "Por favor verifica el reCAPTCHA para continuar";
+        errorDiv.classList.add("show");
         return false;
     }
+
+    
+    return true;
+}
+
 </script>
 
 </body>
