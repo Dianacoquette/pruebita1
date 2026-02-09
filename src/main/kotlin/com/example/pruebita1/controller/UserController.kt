@@ -23,9 +23,9 @@ class UserController(
     fun insertarUsuarios(model: Model): String {
 
         val usuarios = listOf(
-            User(14, "nana", "nana@email.com", "1234"),
-            User(15, "uis", "iiu@email.com", "abcd"),
-            User(16, "sikekeke", "keke@email.com", "pass")
+            User(17, "nana", "nana@email.com", "1234"),
+            User(18, "uis", "iiu@email.com", "abcd"),
+            User(19, "sikekeke", "keke@email.com", "pass")
         )
 
         val guardados = mutableListOf<User>()

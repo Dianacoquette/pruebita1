@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Imagen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(255, 182, 217, 0.1);
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #b08599;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        nav a {
+            color: #d67ba8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #e89fc9;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #d4a8bf;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 182, 217, 0.15);
+            padding: 50px 40px;
+        }
+
+        .icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(244, 171, 225, 0.3);
+        }
+
+        .icon svg {
+            width: 45px;
+            height: 45px;
+            fill: white;
+        }
+
+        h1 {
+            color: #d67ba8;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #b08599;
+            font-size: 15px;
+            margin-bottom: 35px;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .upload-area {
+            border: 3px dashed #f8d7e8;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            background: #fefbfd;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover {
+            border-color: #f4abe1;
+            background: #fff8fc;
+        }
+
+        .upload-area.dragover {
+            border-color: #e89fc9;
+            background: #fff0f8;
+        }
+
+        .upload-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            opacity: 0.6;
+        }
+
+        .upload-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #d67ba8;
+        }
+
+        .upload-text {
+            color: #d67ba8;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #b08599;
+            font-size: 13px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            background: #fff8fc;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 25px;
+            color: #8b5a73;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        .file-name.active {
+            display: block;
+        }
+
+        .file-name svg {
+            width: 18px;
+            height: 18px;
+            fill: #d67ba8;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f4abe1 0%, #e89fc9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 171, 225, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #e89fc9 0%, #dc8db7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .mensaje {
+            background: #fff8fc;
+            border: 2px solid #f8d7e8;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 20px;
+            color: #d67ba8;
+            font-size: 14px;
+            text-align: center;
+            border-left: 4px solid #f4abe1;
+        }
+
+        .mensaje.success {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #16a34a;
+            border-left-color: #22c55e;
+        }
+
+        .mensaje.error {
+            background: #ffe8f0;
+            border-color: #ffc9dc;
+            color: #d65a8a;
+            border-left-color: #f4abe1;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .preview-container.active {
+            display: block;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 2px solid #f8d7e8;
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: #ffb6d9;
+            top: -100px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #ffd4e8;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-card {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .icon {
+                width: 75px;
+                height: 75px;
+            }
+
+            .icon svg {
+                width: 38px;
+                height: 38px;
+            }
+
+            nav {
+                padding: 12px 20px;
+                font-size: 13px;
+            }
+
+            .upload-area {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <nav>
+        <a href="/">Inicio</a>
+        <span class="breadcrumb-separator">›</span>
+        Subir Imagen
+    </nav>
+
+    <div class="container">
+        <div class="upload-card">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+            </div>
+
+            <h1>Subir Imagen</h1>
+            <p class="subtitle">Sube una imagen al servidor FTP</p>
+
+            <form method="post" enctype="multipart/form-data" action="/subir-imagen" id="uploadForm">
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                        </svg>
+                    </div>
+                    <div class="upload-text">Haz clic para seleccionar una imagen</div>
+                    <div class="upload-hint">o arrastra y suelta aquí (JPG, PNG, GIF)</div>
+                </div>
+
+                <input type="file" name="file" id="fileInput" accept="image/*" required>
+
+                <div class="file-name" id="fileName">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                    <span id="fileNameText"></span>
+                </div>
+
+                <div class="preview-container" id="previewContainer">
+                    <img id="imagePreview" class="image-preview" alt="Vista previa">
+                </div>
+
+                <button type="submit" id="submitBtn">Subir Imagen</button>
+            </form>
+
+            <p class="mensaje" th:if="${mensaje}" th:text="${mensaje}" th:classappend="${mensaje.contains('exitosa') || mensaje.contains('éxito')} ? 'success' : 'error'"></p>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const fileNameText = document.getElementById('fileNameText');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('previewContainer');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Click en el área de upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Cuando se selecciona un archivo
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    fileInput.files = files;
+                    handleFile(file);
+                } else {
+                    alert('Por favor selecciona una imagen válida');
+                }
+            }
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+
+            // Mostrar nombre del archivo
+            fileNameText.textContent = file.name;
+            fileName.classList.add('active');
+
+            // Mostrar preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                previewContainer.classList.add('active');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Validación antes de enviar
+        document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Por favor selecciona una imagen');
+                return false;
+            }
+
+            const file = fileInput.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            if (file.size > maxSize) {
+                e.preventDefault();
+                alert('La imagen es demasiado grande. Máximo 10MB');
+                return false;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Subiendo...';
+        });
+    </script>
+
+</body>
+</html>
