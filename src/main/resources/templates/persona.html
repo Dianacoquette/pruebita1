@@ -5,12 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persona Principal</title>
+    <script src="https://kit.fontawesome.com/225617e3e7.js" crossorigin="anonymous"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -36,19 +33,11 @@
             transition: color 0.3s ease;
         }
 
-        nav a:hover {
-            color: #e89fc9;
-        }
+        nav a:hover { color: #e89fc9; }
 
-        .breadcrumb-separator {
-            margin: 0 8px;
-            color: #d4a8bf;
-        }
+        .breadcrumb-separator { margin: 0 8px; color: #d4a8bf; }
 
-        .container {
-            max-width: 800px;
-            margin: 60px auto;
-        }
+        .container { max-width: 800px; margin: 60px auto; }
 
         .content-card {
             background: white;
@@ -57,18 +46,15 @@
             padding: 50px 40px;
         }
 
-        h1 {
-            color: #d67ba8;
-            font-size: 36px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+        h1 { color: #d67ba8; font-size: 36px; margin-bottom: 20px; font-weight: 600; }
 
-        p {
-            color: #b08599;
-            font-size: 16px;
-            margin-bottom: 35px;
-            line-height: 1.6;
+        p { color: #b08599; font-size: 16px; margin-bottom: 35px; line-height: 1.6; }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
         }
 
         .btn-primary {
@@ -90,45 +76,36 @@
             box-shadow: 0 6px 20px rgba(244, 171, 225, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 16px 40px;
+            background: white;
+            color: #d67ba8;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #f8d7e8;
+            transition: all 0.3s ease;
         }
 
-        .decorative-circle {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.1;
-            pointer-events: none;
+        .btn-secondary:hover {
+            background: #fff0f7;
+            transform: translateY(-2px);
         }
 
-        .circle-1 {
-            width: 350px;
-            height: 350px;
-            background: #ffb6d9;
-            top: -100px;
-            right: -100px;
-        }
-
-        .circle-2 {
-            width: 250px;
-            height: 250px;
-            background: #ffd4e8;
-            bottom: -80px;
-            left: -80px;
-        }
+        .decorative-circle { position: fixed; border-radius: 50%; opacity: 0.1; pointer-events: none; }
+        .circle-1 { width: 350px; height: 350px; background: #ffb6d9; top: -100px; right: -100px; }
+        .circle-2 { width: 250px; height: 250px; background: #ffd4e8; bottom: -80px; left: -80px; }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 28px;
-            }
-
-            .content-card {
-                padding: 40px 30px;
-            }
-
-            nav {
-                padding: 12px 20px;
-            }
+            h1 { font-size: 28px; }
+            .content-card { padding: 40px 30px; }
+            nav { padding: 12px 20px; }
+            .btn-group { width: 100%; }
+            .btn-primary, .btn-secondary { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -147,16 +124,17 @@
     <div class="container">
         <div class="content-card">
             <h1>Pantalla Persona Principal</h1>
-            <p>Desde aquí puedes agregar una nueva persona.</p>
-            <a href="/persona/agregar" class="btn-primary">Agregar Persona</a>
+            <p>Desde aquí puedes gestionar personas o insertar datos de prueba.</p>
 
-            <a href="/hardcode" class="btn-primary" style="margin-top: 15px; display: inline-block;">
-                Agregar Personas Hardcode
-            </a>
+            <div class="btn-group">
+                <!-- ✅ Va a la lista del CRUD -->
+                <a href="/usuario" class="btn-primary"><i class="fa-solid fa-user"></i> Ver / Gestionar Personas</a>
 
+                <!-- ✅ Tu ruta hardcode existente -->
+                <a href="/hardcode" class="btn-secondary"><i class="fa-solid fa-gear"></i> Agregar Personas Hardcode</a>
+            </div>
         </div>
     </div>
 
 </body>
-
 </html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${modo == 'editar'} ? 'Editar Usuario' : 'Agregar Usuario'">Formulario</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh; padding: 20px;
+        }
+
+        nav {
+            background: white; padding: 15px 30px; border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(255,182,217,0.1);
+            margin-bottom: 40px; font-size: 14px; color: #b08599;
+        }
+        nav a { color: #d67ba8; text-decoration: none; font-weight: 600; }
+        nav a:hover { color: #e89fc9; }
+        .breadcrumb-separator { margin: 0 8px; color: #d4a8bf; }
+
+        .container { max-width: 600px; margin: 0 auto; }
+
+        .form-card {
+            background: white; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255,182,217,0.15);
+            padding: 50px 40px;
+        }
+
+        h1 { color: #d67ba8; font-size: 28px; margin-bottom: 28px; font-weight: 700; text-align: center; }
+
+        .section-title {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #d4a8bf;
+            margin: 28px 0 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: #f8d7e8; }
+
+        .form-group { margin-bottom: 20px; }
+
+        label { display: block; color: #8b5a73; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
+            width: 100%; padding: 13px 18px;
+            border: 2px solid #f8d7e8; border-radius: 12px;
+            font-size: 15px; background: #fefbfd; color: #5a4351;
+            transition: all 0.2s;
+        }
+        input:focus { outline: none; border-color: #f4abe1; background: white; box-shadow: 0 0 0 4px rgba(244,171,225,0.1); }
+        input::placeholder { color: #d4a8bf; }
+        input.field-ok    { border-color: #5ecb8a; background: #f6fff9; }
+        input.field-ok:focus { box-shadow: 0 0 0 4px rgba(94,203,138,0.1); }
+        input.field-error { border-color: #f0a0a8; background: #fff5f6; }
+        input.field-error:focus { box-shadow: 0 0 0 4px rgba(240,160,168,0.1); }
+
+        .toggle-wrap {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border: 2px solid #f8d7e8; border-radius: 12px;
+            background: #fefbfd; cursor: pointer; transition: all 0.2s;
+        }
+        .toggle-wrap:hover { border-color: #f4abe1; }
+        .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+        .toggle input[type="checkbox"] { display: none; }
+        .toggle-slider {
+            position: absolute; inset: 0;
+            background: #f8d7e8; border-radius: 99px;
+            transition: background 0.2s; cursor: pointer;
+        }
+        .toggle-slider::before {
+            content: ''; position: absolute;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: white; top: 3px; left: 3px;
+            transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .toggle input[type="checkbox"]:checked + .toggle-slider { background: #5ecb8a; }
+        .toggle input[type="checkbox"]:checked + .toggle-slider::before { transform: translateX(20px); }
+        .toggle-label { font-size: 14px; color: #5a4351; }
+        .toggle-label span { font-size: 12px; color: #b08599; display: block; }
+
+        .char-bar-wrap { height: 3px; background: #f8d7e8; border-radius: 99px; margin-top: 5px; overflow: hidden; }
+        .char-bar { height: 100%; border-radius: 99px; width: 0%; transition: width 0.2s, background 0.2s; background: #f4abe1; }
+        .char-bar.ok    { background: #5ecb8a; }
+        .char-bar.error { background: #f0a0a8; }
+
+        .char-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; min-height: 18px; }
+        .char-hint { font-size: 12px; color: #b08599; font-style: italic; }
+        .char-hint.ok    { color: #5ecb8a; font-style: normal; font-weight: 600; }
+        .char-hint.error { color: #e05a78; font-style: normal; }
+        .char-count { font-size: 11px; color: #d4a8bf; }
+        .char-count.ok    { color: #5ecb8a; }
+        .char-count.error { color: #e05a78; }
+
+        .captcha-box { background: #fff8fc; border: 2px solid #f8d7e8; border-radius: 12px; padding: 15px; }
+        .captcha-box label { color: #d67ba8; margin-bottom: 10px; }
+
+        .error-box {
+            background: #ffe8f0; color: #d65a8a; padding: 12px 16px;
+            border-radius: 10px; font-size: 14px; margin: 15px 0;
+            border-left: 4px solid #f4abe1; display: none;
+        }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+        .btn {
+            flex: 1; padding: 14px; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            text-decoration: none; text-align: center; transition: all 0.25s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f4abe1, #e89fc9);
+            color: white; box-shadow: 0 4px 15px rgba(244,171,225,0.3);
+        }
+        .btn-primary:hover { background: linear-gradient(135deg, #e89fc9, #dc8db7); transform: translateY(-1px); }
+        .btn-secondary { background: white; color: #d67ba8; border: 2px solid #f8d7e8; }
+        .btn-secondary:hover { background: #fff0f7; }
+
+        .decorative-circle { position: fixed; border-radius: 50%; opacity: 0.08; pointer-events: none; }
+        .circle-1 { width: 300px; height: 300px; background: #ffb6d9; top: -100px; right: -100px; }
+        .circle-2 { width: 200px; height: 200px; background: #ffd4e8; bottom: -50px; left: -50px; }
+
+        #pantallaExito { display: none; text-align: center; padding: 40px; }
+        #pantallaExito h2 { color: #d67ba8; font-size: 26px; margin-bottom: 12px; }
+        #pantallaExito p { color: #b08599; }
+        .success-icon {
+            width: 80px; height: 80px; margin: 0 auto 20px;
+            background: linear-gradient(135deg, #f4abe1, #e89fc9);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 38px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="decorative-circle circle-1"></div>
+<div class="decorative-circle circle-2"></div>
+
+<nav>
+    <a href="/inicio">Inicio</a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="/persona">Persona Principal</a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="/usuario">Lista de Usuarios</a>
+    <span class="breadcrumb-separator">›</span>
+    <span th:text="${modo == 'editar'} ? 'Editar Usuario' : 'Agregar Usuario'"></span>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+
+        <form id="formUsuario"
+              th:action="${modo == 'editar'}
+                         ? @{/usuario/actualizar/{id}(id=${usuario.id})}
+                         : @{/usuario/guardar}"
+              method="post"
+              onsubmit="return validarFormulario()"
+              novalidate>
+
+            <h1 th:text="${modo == 'editar'} ? 'Editar Usuario' : 'Agregar Usuario'"></h1>
+
+            <input type="hidden" th:if="${modo == 'editar'}" name="id" th:value="${usuario.id}">
+
+            <!-- DATOS DE CUENTA -->
+            <div class="section-title">Datos de cuenta</div>
+
+            <div class="form-group">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username"
+                       th:value="${usuario.username}"
+                       placeholder="Nombre de usuario"
+                       minlength="3" maxlength="50"
+                       oninput="actualizarCampo(this, 3, 50)">
+                <div class="char-bar-wrap"><div class="char-bar" id="bar-username"></div></div>
+                <div class="char-info">
+                    <span class="char-hint" id="hint-username">Mínimo 3 caracteres</span>
+                    <span class="char-count" id="count-username">0 / 50</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email"
+                       th:value="${usuario.email}"
+                       placeholder="correo@ejemplo.com"
+                       maxlength="150"
+                       oninput="actualizarCampo(this, 6, 150)">
+                <div class="char-bar-wrap"><div class="char-bar" id="bar-email"></div></div>
+                <div class="char-info">
+                    <span class="char-hint" id="hint-email">Formato: correo@dominio.com</span>
+                    <span class="char-count" id="count-email">0 / 150</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="passwd">
+                    Contrasena *
+                    <span th:if="${modo == 'editar'}"
+                          style="font-weight:400; font-style:italic; color:#b08599;">
+                        (deja en blanco para no cambiarla)
+                    </span>
+                </label>
+                <input type="password" id="passwd" name="passwd"
+                       placeholder="********"
+                       minlength="6" maxlength="50"
+                       oninput="actualizarCampo(this, 6, 50)">
+                <div class="char-bar-wrap"><div class="char-bar" id="bar-passwd"></div></div>
+                <div class="char-info">
+                    <span class="char-hint" id="hint-passwd">Minimo 6 caracteres, incluye letra y numero</span>
+                    <span class="char-count" id="count-passwd">0 / 50</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPasswd">Confirmar Contrasena *</label>
+                <input type="password" id="confirmPasswd"
+                       placeholder="********"
+                       maxlength="50"
+                       oninput="verificarConfirmacion()">
+                <div class="char-info">
+                    <span class="char-hint" id="hint-confirmPasswd"
+                          th:text="${modo == 'editar'} ? 'Solo completa si vas a cambiar la contrasena' : 'Repite la contrasena'">
+                    </span>
+                </div>
+            </div>
+
+            <!-- DATOS PERSONALES -->
+            <div class="section-title">Datos personales</div>
+
+            <div class="form-group">
+                <label for="nombreCompleto">Nombre Completo</label>
+                <input type="text" id="nombreCompleto" name="nombreCompleto"
+                       th:value="${usuario.nombreCompleto}"
+                       placeholder="Ej. Juan Perez Garcia"
+                       maxlength="150"
+                       oninput="actualizarCampo(this, 3, 150)">
+                <div class="char-bar-wrap"><div class="char-bar" id="bar-nombreCompleto"></div></div>
+                <div class="char-info">
+                    <span class="char-hint" id="hint-nombreCompleto">Nombre y apellidos</span>
+                    <span class="char-count" id="count-nombreCompleto">0 / 150</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Numero Telefonico</label>
+                <input type="tel" id="telefono" name="telefono"
+                       th:value="${usuario.telefono}"
+                       placeholder="Ej. +52 55 1234 5678"
+                       maxlength="20"
+                       oninput="limpiarTelefono(this)">
+                <div class="char-bar-wrap"><div class="char-bar" id="bar-telefono"></div></div>
+                <div class="char-info">
+                    <span class="char-hint" id="hint-telefono">Solo numeros, +, - y espacios</span>
+                    <span class="char-count" id="count-telefono">0 / 20</span>
+                </div>
+            </div>
+
+            <!-- ESTADO -->
+            <div class="section-title">Estado</div>
+
+            <div class="form-group">
+                <label for="activoToggle">Estado de la cuenta</label>
+                <label class="toggle-wrap" for="activoToggle">
+                    <span class="toggle">
+                        <input type="hidden" name="activo" value="false">
+                        <input type="checkbox" id="activoToggle" name="activo"
+                               th:checked="${usuario.activo}" value="true">
+                        <span class="toggle-slider"></span>
+                    </span>
+                    <div class="toggle-label">
+                        Cuenta activa
+                        <span>El usuario podra acceder al sistema</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- CAPTCHA -->
+            <div class="form-group" th:if="${modo == 'agregar'}">
+                <div class="section-title">Verificacion</div>
+                <div class="captcha-box">
+                    <label id="captchaTexto"></label>
+                    <input type="text" id="captchaRespuesta"
+                           placeholder="Escribe tu respuesta"
+                           maxlength="3"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
+
+            <span id="error" class="error-box"></span>
+
+            <div class="btn-row">
+                <a href="/usuario" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary"
+                        th:text="${modo == 'editar'} ? 'Actualizar' : 'Guardar'">Guardar</button>
+            </div>
+        </form>
+
+        <div id="pantallaExito">
+            <div class="success-icon">OK</div>
+            <h2 th:text="${modo == 'editar'} ? 'Usuario actualizado!' : 'Usuario agregado!'"></h2>
+            <p>Redirigiendo a la lista...</p>
+        </div>
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var MODO = /*[[${modo}]]*/ 'agregar';
+
+    var num1, num2, resultadoCorrecto;
+
+    function generarCaptcha() {
+        num1 = Math.floor(Math.random() * 10) + 1;
+        num2 = Math.floor(Math.random() * 10) + 1;
+        resultadoCorrecto = num1 + num2;
+        var label = document.getElementById("captchaTexto");
+        if (label) label.innerText = "Captcha: Cuanto es " + num1 + " + " + num2 + "? *";
+    }
+
+    var HINTS = {
+        username:       'Minimo 3 caracteres',
+        email:          'Formato: correo@dominio.com',
+        passwd:         'Minimo 6 caracteres, incluye letra y numero',
+        nombreCompleto: 'Nombre y apellidos',
+        telefono:       'Solo numeros, +, - y espacios'
+    };
+
+    function actualizarCampo(input, min, max) {
+        var len   = input.value.length;
+        var bar   = document.getElementById('bar-'   + input.id);
+        var count = document.getElementById('count-' + input.id);
+        var hint  = document.getElementById('hint-'  + input.id);
+
+        if (!bar || !count || !hint) return;
+
+        count.textContent = len + ' / ' + max;
+        var pct = Math.min((len / min) * 100, 100);
+        bar.style.width = pct + '%';
+
+        var ok = len >= min;
+        bar.className   = 'char-bar'   + (ok ? ' ok' : len > 0 ? ' error' : '');
+        count.className = 'char-count' + (ok ? ' ok' : len > 0 ? ' error' : '');
+        input.className = ok ? 'field-ok' : (len > 0 ? 'field-error' : '');
+
+        if (ok) {
+            hint.className   = 'char-hint ok';
+            hint.textContent = 'Correcto';
+        } else if (len > 0) {
+            var faltan = min - len;
+            hint.className   = 'char-hint error';
+            hint.textContent = 'Faltan ' + faltan + (faltan > 1 ? ' caracteres' : ' caracter');
+        } else {
+            hint.className   = 'char-hint';
+            hint.textContent = HINTS[input.id] || 'Minimo ' + min + ' caracteres';
+        }
+
+        if (input.id === 'passwd') verificarConfirmacion();
+    }
+
+    function limpiarTelefono(input) {
+        input.value = input.value.replace(/[^0-9+\-\s()]/g, '');
+        actualizarCampo(input, 7, 20);
+    }
+
+    function verificarConfirmacion() {
+        var passwd  = document.getElementById('passwd').value;
+        var confirm = document.getElementById('confirmPasswd');
+        var hint    = document.getElementById('hint-confirmPasswd');
+
+        if (!confirm.value) {
+            confirm.className = '';
+            hint.className    = 'char-hint';
+            hint.textContent  = MODO === 'editar'
+                ? 'Solo completa si vas a cambiar la contrasena'
+                : 'Repite la contrasena';
+            return;
+        }
+
+        var ok = passwd === confirm.value;
+        confirm.className = ok ? 'field-ok' : 'field-error';
+        hint.className    = 'char-hint ' + (ok ? 'ok' : 'error');
+        hint.textContent  = ok ? 'Las contrasenas coinciden' : 'Las contrasenas no coinciden';
+    }
+
+    function inicializarCampos() {
+        var campos = [
+            {id: 'username',       min: 3,  max: 50},
+            {id: 'email',          min: 6,  max: 150},
+            {id: 'nombreCompleto', min: 3,  max: 150},
+            {id: 'telefono',       min: 7,  max: 20}
+        ];
+        campos.forEach(function(c) {
+            var el = document.getElementById(c.id);
+            if (el && el.value) actualizarCampo(el, c.min, c.max);
+        });
+    }
+
+    function validarFormulario() {
+        var username      = document.getElementById("username").value.trim();
+        var email         = document.getElementById("email").value.trim();
+        var passwd        = document.getElementById("passwd").value.trim();
+        var confirmPasswd = document.getElementById("confirmPasswd").value.trim();
+        var telefono      = document.getElementById("telefono").value.trim();
+        var errorDiv      = document.getElementById("error");
+
+        errorDiv.style.display = "none";
+        errorDiv.textContent   = "";
+
+        function mostrarError(msg) {
+            errorDiv.textContent   = msg;
+            errorDiv.style.display = "block";
+            return false;
+        }
+
+        if (!username || !email)
+            return mostrarError("Username y email son obligatorios.");
+
+        if (!/^[a-zA-Z0-9._\-]{3,50}$/.test(username))
+            return mostrarError("El username solo puede tener letras, numeros, puntos o guiones (min. 3 caracteres).");
+
+        if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(email))
+            return mostrarError("El email no tiene un formato valido.");
+
+        if (MODO === 'agregar' || passwd !== '') {
+            if (!passwd)
+                return mostrarError("La contrasena es obligatoria.");
+            if (!/^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9@$!%*?&#]{6,50}$/.test(passwd))
+                return mostrarError("La contrasena debe tener al menos una letra, un numero y minimo 6 caracteres.");
+            if (passwd !== confirmPasswd)
+                return mostrarError("Las contrasenas no coinciden.");
+        }
+
+        if (telefono && !/^[0-9+\-\s()]{7,20}$/.test(telefono))
+            return mostrarError("El telefono solo puede tener numeros, +, -, parentesis y espacios (min. 7 digitos).");
+
+        if (MODO === 'agregar') {
+            var captchaEl = document.getElementById("captchaRespuesta");
+            var captcha = captchaEl ? captchaEl.value.trim() : '';
+            if (!captcha) return mostrarError("Por favor completa el captcha.");
+            if (parseInt(captcha) !== resultadoCorrecto) {
+                generarCaptcha();
+                return mostrarError("Captcha incorrecto, intenta otra vez.");
+            }
+        }
+
+        document.getElementById("formUsuario").style.display = "none";
+        document.getElementById("pantallaExito").style.display = "block";
+        return true;
+    }
+
+    window.onload = function() {
+        if (MODO === 'agregar') generarCaptcha();
+        inicializarCampos();
+    };
+</script>
+
+</body>
+</html>

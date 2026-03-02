@@ -1,6 +1,7 @@
 package com.example.pruebita1.model
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "USERS")
@@ -11,11 +12,23 @@ data class User(
     val id: Int = 0,
 
     @Column(name = "USERNAME")
-    val username: String = "",
+    var username: String = "",
 
     @Column(name = "EMAIL")
-    val email: String = "",
+    var email: String = "",
 
     @Column(name = "PASSWD")
-    val passwd: String = ""
+    var passwd: String = "",
+
+    @Column(name = "NOMBRE_COMPLETO")
+    var nombreCompleto: String = "",
+
+    @Column(name = "TELEFONO")
+    var telefono: String = "",
+
+    @Column(name = "ACTIVO")
+    var activo: Boolean = true,
+
+    @Column(name = "FECHA_CREACION", updatable = false)
+    var fechaCreacion: LocalDateTime = LocalDateTime.now()
 )

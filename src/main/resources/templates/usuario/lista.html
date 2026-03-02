@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    <script src="https://kit.fontawesome.com/225617e3e7.js" crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 50%, #ffe8f3 100%);
+            min-height: 100vh; padding: 20px;
+        }
+
+        nav {
+            background: white; padding: 15px 30px; border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(255,182,217,0.15);
+            margin-bottom: 30px; font-size: 14px; color: #b08599;
+        }
+        nav a { color: #d67ba8; text-decoration: none; font-weight: 600; }
+        nav a:hover { color: #e89fc9; }
+        .breadcrumb-separator { margin: 0 8px; color: #d4a8bf; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { color: #d67ba8; font-size: 30px; font-weight: 700; margin-bottom: 24px; text-align: center; }
+
+        .flash {
+            background: #e8fff3; color: #2e7d52;
+            border-left: 4px solid #5ecb8a;
+            padding: 12px 18px; border-radius: 10px;
+            margin-bottom: 20px; font-size: 14px;
+        }
+
+        /* ── Filtros ── */
+        .filters-card {
+            background: white; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(255,182,217,0.1);
+            padding: 20px 24px; margin-bottom: 20px;
+        }
+        .filters-title {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #d4a8bf; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            gap: 10px; align-items: end;
+        }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 12px; font-weight: 600; color: #8b5a73; }
+
+        .filter-input {
+            padding: 10px 14px;
+            border: 2px solid #f8d7e8; border-radius: 10px;
+            font-size: 13px; background: #fefbfd; color: #5a4351;
+            transition: border-color 0.2s; font-family: inherit;
+            width: 100%;
+        }
+        .filter-input:focus { outline: none; border-color: #f4abe1; }
+
+        /* select personalizado */
+        select.filter-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4a8bf' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+            cursor: pointer;
+        }
+
+        /* date input — quitar icono nativo en algunos browsers */
+        input[type="date"].filter-input::-webkit-calendar-picker-indicator {
+            opacity: 0.5; cursor: pointer;
+        }
+
+        /* badge activo/filtro activo */
+        .filter-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff0f7; color: #d67ba8;
+            border: 1.5px solid #f8d7e8; border-radius: 20px;
+            padding: 4px 12px; font-size: 12px; font-weight: 600;
+            margin-right: 6px; margin-bottom: 8px;
+        }
+        .filter-badge button {
+            background: none; border: none; color: #d67ba8;
+            cursor: pointer; font-size: 14px; padding: 0; line-height: 1;
+        }
+        .active-filters { margin-bottom: 10px; }
+
+        .btn {
+            padding: 10px 18px; border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            text-decoration: none; display: inline-flex;
+            align-items: center; gap: 6px; transition: all 0.25s;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f4abe1, #e89fc9);
+            color: white; box-shadow: 0 4px 12px rgba(244,171,225,0.3);
+        }
+        .btn-primary:hover { background: linear-gradient(135deg, #e89fc9, #dc8db7); transform: translateY(-1px); }
+        .btn-ghost {
+            background: white; color: #b08599;
+            border: 2px solid #f8d7e8;
+        }
+        .btn-ghost:hover { background: #fff0f7; color: #d67ba8; }
+
+        .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-wrap { flex: 1; min-width: 200px; position: relative; }
+        .search-wrap input {
+            width: 100%; padding: 10px 18px 10px 40px;
+            border: 2px solid #f8d7e8; border-radius: 10px;
+            font-size: 14px; background: white; color: #5a4351;
+            transition: border-color 0.2s;
+        }
+        .search-wrap input:focus { outline: none; border-color: #f4abe1; }
+        .search-wrap::before {
+            content: ""; position: absolute;
+            left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px;
+        }
+
+        /* Tabla */
+        .card {
+            background: white; border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(255,182,217,0.12); overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: linear-gradient(135deg, #f4abe1, #e89fc9); }
+        thead th {
+            color: white; padding: 14px 16px; text-align: left;
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+        }
+        tbody tr { border-bottom: 1px solid #fdf0f6; transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #fff8fc; }
+        tbody td { padding: 12px 16px; font-size: 13px; color: #5a4351; }
+
+        .badge-id {
+            background: #f8d7e8; color: #d67ba8;
+            padding: 3px 10px; border-radius: 20px;
+            font-weight: 700; font-size: 12px; font-family: monospace;
+        }
+        .badge-status {
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600; white-space: nowrap;
+        }
+        .badge-active   { background: #e8fff3; color: #2e7d52; border: 1.5px solid #5ecb8a; }
+        .badge-inactive { background: #fff0f0; color: #c0392b; border: 1.5px solid #f0a0a8; }
+
+        .btn-sm   { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+        .btn-edit { background: #fff3e0; color: #e67e22; border: 1.5px solid #f0a056; }
+        .btn-edit:hover { background: #ffe0b2; }
+        .btn-delete { background: #ffeaec; color: #c0392b; border: 1.5px solid #f0a0a8; }
+        .btn-delete:hover { background: #ffcdd2; }
+        .actions { display: flex; gap: 8px; }
+
+        .empty { text-align: center; padding: 60px 20px; color: #b08599; }
+        .empty p { font-size: 15px; margin-top: 10px; }
+
+        .pagination {
+            display: flex; justify-content: center;
+            align-items: center; gap: 6px;
+            margin-top: 24px; flex-wrap: wrap;
+        }
+        .btn-page {
+            padding: 8px 14px; border: 2px solid #f8d7e8;
+            background: white; color: #d67ba8; border-radius: 10px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .btn-page:hover { background: #f8d7e8; }
+        .btn-page.active {
+            background: linear-gradient(135deg, #f4abe1, #e89fc9);
+            color: white; border-color: transparent;
+        }
+        .btn-page.disabled { opacity: 0.4; pointer-events: none; }
+        .total-info { text-align: center; font-size: 13px; color: #b08599; margin-top: 12px; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(90,40,60,0.25); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999; opacity: 0; visibility: hidden; transition: all 0.25s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal {
+            background: white; border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(255,182,217,0.35);
+            padding: 40px 36px; max-width: 420px; width: 90%; text-align: center;
+            transform: scale(0.9) translateY(10px); transition: transform 0.25s;
+        }
+        .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+        .modal-icon {
+            width: 70px; height: 70px; background: #ffeaec; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 28px; color: #c0392b;
+        }
+        .modal h2 { color: #5a4351; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        .modal p  { color: #b08599; font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+        .modal p strong { color: #d67ba8; }
+        .modal-actions { display: flex; gap: 12px; }
+        .btn-cancel-modal {
+            flex: 1; padding: 12px; border: 2px solid #f8d7e8;
+            background: white; color: #d67ba8; border-radius: 12px;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-cancel-modal:hover { background: #fff0f7; }
+        .btn-confirm-modal {
+            flex: 1; padding: 12px; border: none;
+            background: linear-gradient(135deg, #ff6b8a, #e0445e);
+            color: white; border-radius: 12px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-confirm-modal:hover { transform: translateY(-1px); }
+
+        @media (max-width: 900px) {
+            .filters-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .filters-grid { grid-template-columns: 1fr; }
+            thead th:nth-child(4), tbody td:nth-child(4),
+            thead th:nth-child(5), tbody td:nth-child(5) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/inicio">Inicio</a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="/persona">Persona Principal</a>
+    <span class="breadcrumb-separator">›</span>
+    <span>Lista de Usuarios</span>
+</nav>
+
+<div class="container">
+    <h1>Gestión de Usuarios</h1>
+
+    <div class="flash" th:if="${mensaje}" th:text="${mensaje}"></div>
+
+    <!-- ── Formulario de filtros ── -->
+    <form method="get" th:action="@{/usuario}" id="formFiltros">
+        <div class="filters-card">
+            <div class="filters-title">
+                <i class="fa-solid fa-filter"></i> Filtros de búsqueda
+            </div>
+
+            <div class="filters-grid">
+
+                <!-- Búsqueda texto -->
+                <div class="filter-group">
+                    <label>Buscar</label>
+                    <div class="search-wrap" style="min-width:0">
+                        <input type="text" name="busqueda"
+                               th:value="${busqueda}"
+                               placeholder="Username, nombre, email, teléfono…"
+                               id="inputBusqueda">
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="filter-group">
+                    <label>Estado</label>
+                    <select name="activo" class="filter-input" id="selectActivo">
+                        <option value=""    th:selected="${activo == ''}">Todos</option>
+                        <option value="true"  th:selected="${activo == 'true'}">● Activo</option>
+                        <option value="false" th:selected="${activo == 'false'}">● Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- Desde -->
+                <div class="filter-group">
+                    <label>Desde</label>
+                    <input type="date" name="desde" class="filter-input"
+                           th:value="${desde}" id="inputDesde">
+                </div>
+
+                <!-- Hasta -->
+                <div class="filter-group">
+                    <label>Hasta</label>
+                    <input type="date" name="hasta" class="filter-input"
+                           th:value="${hasta}" id="inputHasta">
+                </div>
+
+                <!-- Botones -->
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <div style="display:flex; gap:8px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+                        </button>
+                        <a th:href="@{/usuario}" class="btn btn-ghost">
+                            <i class="fa-solid fa-xmark"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Badges de filtros activos -->
+    <div class="active-filters"
+         th:if="${busqueda != '' || activo != '' || desde != '' || hasta != ''}">
+        <span class="filter-badge" th:if="${busqueda != ''}">
+            <i class="fa-solid fa-magnifying-glass"></i> <span th:text="${busqueda}"></span>
+            <button type="button" onclick="limpiarFiltro('busqueda')">×</button>
+        </span>
+        <span class="filter-badge" th:if="${activo == 'true'}">
+            ● Activos
+            <button type="button" onclick="limpiarFiltro('activo')">×</button>
+        </span>
+        <span class="filter-badge" th:if="${activo == 'false'}">
+            ● Inactivos
+            <button type="button" onclick="limpiarFiltro('activo')">×</button>
+        </span>
+        <span class="filter-badge" th:if="${desde != ''}">
+            <i class="fa-solid fa-calendar"></i> Desde: <span th:text="${desde}"></span>
+            <button type="button" onclick="limpiarFiltro('desde')">×</button>
+        </span>
+        <span class="filter-badge" th:if="${hasta != ''}">
+            <i class="fa-solid fa-calendar"></i> Hasta: <span th:text="${hasta}"></span>
+            <button type="button" onclick="limpiarFiltro('hasta')">×</button>
+        </span>
+    </div>
+
+    <!-- Botón agregar -->
+    <div class="toolbar">
+        <a th:href="@{/usuario/agregar}" class="btn btn-primary" style="margin-left:auto">
+            + Agregar usuario
+        </a>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card">
+        <table th:if="${!usuarios.empty}">
+            <thead>
+                <tr>
+                    
+                    <th>Username</th>
+                    <th>Nombre Completo</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                    <th>Fecha Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${usuarios}">
+                    
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.nombreCompleto != null && u.nombreCompleto != ''} ? ${u.nombreCompleto} : '—'"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.telefono != null && u.telefono != ''} ? ${u.telefono} : '—'"></td>
+                    <td>
+                        <span class="badge-status"
+                              th:classappend="${u.activo} ? 'badge-active' : 'badge-inactive'"
+                              th:text="${u.activo} ? '● Activo' : '● Inactivo'">
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(u.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/usuario/editar/{id}(id=${u.id})}"
+                               class="btn btn-sm btn-edit">
+                                <i class="fa-regular fa-pen-to-square"></i> Editar
+                            </a>
+                            <form th:action="@{/usuario/eliminar/{id}(id=${u.id})}"
+                                  method="post" th:id="'form-' + ${u.id}">
+                                <button type="button" class="btn btn-sm btn-delete"
+                                        th:data-id="${u.id}"
+                                        th:data-username="${u.username}"
+                                        onclick="abrirModal(this)">
+                                    <i class="fa-regular fa-trash-can"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="empty" th:if="${usuarios.empty}">
+            <span style="font-size:48px"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <p>No se encontraron usuarios con los filtros aplicados.</p>
+        </div>
+    </div>
+
+    <p class="total-info" th:if="${totalRegistros > 0}">
+        Página <strong th:text="${paginaActual + 1}"></strong>
+        de <strong th:text="${totalPaginas}"></strong>
+        — <strong th:text="${totalRegistros}"></strong> registro(s)
+    </p>
+
+    <!-- Paginación (conserva filtros activos) -->
+    <div class="pagination" th:if="${totalPaginas > 1}">
+        <a th:href="@{/usuario(pagina=0,      busqueda=${busqueda}, activo=${activo}, desde=${desde}, hasta=${hasta})}"
+           class="btn-page" th:classappend="${paginaActual == 0} ? ' disabled'">« Primera</a>
+        <a th:href="@{/usuario(pagina=${paginaActual - 1}, busqueda=${busqueda}, activo=${activo}, desde=${desde}, hasta=${hasta})}"
+           class="btn-page" th:classappend="${paginaActual == 0} ? ' disabled'">‹ Anterior</a>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPaginas - 1)}">
+            <a th:href="@{/usuario(pagina=${i}, busqueda=${busqueda}, activo=${activo}, desde=${desde}, hasta=${hasta})}"
+               class="btn-page"
+               th:classappend="${i == paginaActual} ? ' active'"
+               th:text="${i + 1}"></a>
+        </th:block>
+        <a th:href="@{/usuario(pagina=${paginaActual + 1}, busqueda=${busqueda}, activo=${activo}, desde=${desde}, hasta=${hasta})}"
+           class="btn-page"
+           th:classappend="${paginaActual == totalPaginas - 1} ? ' disabled'">Siguiente ›</a>
+        <a th:href="@{/usuario(pagina=${totalPaginas - 1}, busqueda=${busqueda}, activo=${activo}, desde=${desde}, hasta=${hasta})}"
+           class="btn-page"
+           th:classappend="${paginaActual == totalPaginas - 1} ? ' disabled'">Última »</a>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-icon"><i class="fa-regular fa-trash-can"></i></div>
+        <h2>¿Eliminar usuario?</h2>
+        <p>Estás a punto de eliminar a <strong id="modalUsername"></strong>.<br>Esta acción no se puede deshacer.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-confirm-modal" onclick="confirmarEliminar()">Sí, eliminar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Modal ──
+    let formIdPendiente = null;
+    function abrirModal(btn) {
+        formIdPendiente = btn.dataset.id;
+        document.getElementById('modalUsername').textContent = btn.dataset.username;
+        document.getElementById('modalOverlay').classList.add('active');
+    }
+    function cerrarModal() {
+        formIdPendiente = null;
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+    function confirmarEliminar() {
+        if (formIdPendiente !== null)
+            document.getElementById('form-' + formIdPendiente).submit();
+    }
+    document.getElementById('modalOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) cerrarModal();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+    // ── Búsqueda en tiempo real (solo campo texto) ──
+    let debounceTimer;
+    document.getElementById('inputBusqueda').addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => document.getElementById('formFiltros').submit(), 400);
+    });
+
+    // ── Select estado: envía inmediatamente ──
+    document.getElementById('selectActivo').addEventListener('change', () => {
+        document.getElementById('formFiltros').submit();
+    });
+
+    // ── Fechas: envía al cambiar ──
+    document.getElementById('inputDesde').addEventListener('change', () => {
+        document.getElementById('formFiltros').submit();
+    });
+    document.getElementById('inputHasta').addEventListener('change', () => {
+        document.getElementById('formFiltros').submit();
+    });
+
+    // ── Limpiar un filtro individual ──
+    function limpiarFiltro(campo) {
+        const el = document.querySelector(`[name="${campo}"]`);
+        if (el) el.value = '';
+        document.getElementById('formFiltros').submit();
+    }
+</script>
+
+</body>
+</html>
